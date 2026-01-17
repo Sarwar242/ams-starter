@@ -4,13 +4,15 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +22,15 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'employee_code',
+        'department_id',
+        'work_pattern_id',
+        'role',
+        'is_active',
+        'joined_at',
         'password',
+        'profile_photo_path',
+        'current_team_id',
     ];
 
     /**
@@ -31,6 +41,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
     ];
 
     /**
@@ -42,7 +54,48 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'two_factor_confirmed_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'joined_at' => 'date',
+            'deleted_at' => 'datetime',
         ];
+    }
+
+    /**
+     * The name of the "deleted at" column.
+     */
+    const DELETED_AT = 'deleted_at';
+
+    /**
+     * Check if the user is an admin.
+     */
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    /**
+     * Check if the user is a leader.
+     */
+    public function isLeader(): bool
+    {
+        return $this->role === 'leader';
+    }
+
+    /**
+     * Check if the user is a regular user.
+     */
+    public function isUser(): bool
+    {
+        return $this->role === 'user';
+    }
+
+    /**
+     * Check if the user account is active.
+     */
+    public function isActive(): bool
+    {
+        return $this->is_active;
     }
 }

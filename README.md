@@ -7,6 +7,71 @@
 <a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
 </p>
 
+---
+
+## 🚀 Laravel Fortify Authentication System
+
+This Laravel application includes a **complete authentication system** powered by Laravel Fortify with beautiful Tailwind CSS UI, optimized for Apache server deployment with Blade templates.
+
+### ✨ Features
+
+- ✅ **Full Authentication Flow**: Login, Registration, Password Reset, Email Verification
+- ✅ **Two-Factor Authentication**: QR code generation with recovery codes
+- ✅ **Profile Management**: Update profile info, change password, manage 2FA
+- ✅ **Custom User Fields**: employee_code, role (admin/leader/user), department_id, work_pattern_id
+- ✅ **Beautiful UI**: Responsive Tailwind CSS design
+- ✅ **Apache Ready**: No Node.js runtime needed on production (static CSS)
+- ✅ **Role-Based System**: Admin, Leader, User roles with helper methods
+- ✅ **Soft Deletes**: Full audit trail support
+
+### 📚 Quick Start
+
+```bash
+# Install dependencies
+composer install && npm install
+
+# Setup environment
+cp .env.example .env
+php artisan key:generate
+
+# Configure database in .env, then migrate
+php artisan migrate
+
+# Build Tailwind CSS assets
+npm run build
+
+# Start development server
+php artisan serve
+```
+
+**👉 See [QUICK_START.md](QUICK_START.md) for detailed setup instructions**  
+**📖 See [README_AUTHENTICATION.md](README_AUTHENTICATION.md) for complete documentation**
+
+### 🔐 Create First Admin User
+
+```bash
+php artisan tinker
+```
+
+```php
+\App\Models\User::create([
+    'name' => 'Admin User',
+    'email' => 'admin@example.com',
+    'password' => bcrypt('password'),
+    'role' => 'admin',
+    'is_active' => true,
+]);
+```
+
+### 🌐 Why Blade + Apache + Tailwind?
+
+- **No Node.js Runtime**: Tailwind compiles to static CSS during build
+- **Server-Side Rendering**: Fast page loads, SEO-friendly, works without JavaScript
+- **Simple Deployment**: Run `npm run build` once, upload to Apache, done!
+- **Production Ready**: Standard `.htaccess`, optimized for Apache
+
+---
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:

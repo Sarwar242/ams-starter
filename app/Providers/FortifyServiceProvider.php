@@ -21,7 +21,13 @@ class FortifyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(\Laravel\Fortify\Contracts\LoginViewResponse::class, \App\Http\Responses\LoginViewResponse::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\RegisterViewResponse::class, \App\Http\Responses\RegisterViewResponse::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\RequestPasswordResetLinkViewResponse::class, \App\Http\Responses\RequestPasswordResetLinkViewResponse::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\ResetPasswordViewResponse::class, \App\Http\Responses\ResetPasswordViewResponse::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\VerifyEmailViewResponse::class, \App\Http\Responses\VerifyEmailViewResponse::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\ConfirmPasswordViewResponse::class, \App\Http\Responses\ConfirmPasswordViewResponse::class);
+        $this->app->singleton(\Laravel\Fortify\Contracts\TwoFactorChallengeViewResponse::class, \App\Http\Responses\TwoFactorChallengeViewResponse::class);
     }
 
     /**
