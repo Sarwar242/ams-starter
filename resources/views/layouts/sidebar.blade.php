@@ -1,6 +1,6 @@
 <aside 
+    class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out"
     :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-    class="fixed inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out lg:translate-x-0"
 >
     <!-- Sidebar Header -->
     <div class="flex items-center justify-between h-16 px-4 border-b">
@@ -8,13 +8,13 @@
             勤務管理  
             <span class="text-sm text-gray-500 block">Work System</span>
         </span>
-        <button @click="sidebarOpen = false" class="lg:hidden text-gray-500 hover:text-gray-700">
-            x
+        <button @click="sidebarOpen = false" class="text-gray-500 hover:text-gray-700">
+            ✖️
         </button>
     </div>
 
     <!-- Menu -->
-    <nav class="px-2 py-4 space-y-1 text-sm">
+    <nav class="px-2 py-4 space-y-1 text-sm overflow-y-auto" style="max-height: calc(100vh - 4rem);">
 
         <!-- Dashboard -->
         <a href="{{ route('dashboard') }}"

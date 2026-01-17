@@ -1,34 +1,34 @@
 @extends('layouts.app')
 
 @section('content')
-<div>
-    <div class="w-[90%]">
+<div class="py-12">
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
         <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-6 bg-white border-b border-gray-200">
                 <div class="flex justify-between items-center mb-6">
-                    <h1 class="text-2xl font-bold">Business Partners / 取引会社マスタ</h1>
+                    <h1 class="text-xl font-bold">Business Partners / 取引会社マスタ</h1>
                     <a href="{{ route('business-partners.create') }}"
-                       class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                       class="bg-blue-600 text-white px-3 py-2 text-sm rounded hover:bg-blue-700">
                         Add New / 新規登録
                     </a>
                 </div>
 
                 @if (session('success'))
-                    <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+                    <div class="mb-6 p-3 bg-green-100 border border-green-400 text-green-700 rounded text-sm">
                         {{ session('success') }}
                     </div>
                 @endif
 
                 <!-- Search + Per page -->
-                <form method="GET" class="mb-6 flex flex-wrap gap-4 items-end">
+                <form method="GET" class="mb-6 flex flex-wrap gap-3 items-end">
                     <div>
                         <input type="text" name="search" value="{{ request('search') }}"
-                               placeholder="Search name, code, contact..." class="border rounded px-4 py-2 w-64">
+                               placeholder="Search name, code, contact..." class="border rounded px-3 py-1.5 text-sm w-56">
                     </div>
 
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 text-sm">
                         <label>Show:</label>
-                        <select name="per_page" onchange="this.form.submit()" class="border rounded px-3 py-2">
+                        <select name="per_page" onchange="this.form.submit()" class="border rounded px-2 py-1.5 text-sm">
                             <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
                             <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
                             <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
@@ -36,37 +36,37 @@
                         </select>
                     </div>
 
-                    <button type="submit" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700">
+                    <button type="submit" class="bg-gray-600 text-white px-3 py-1.5 text-sm rounded hover:bg-gray-700">
                         Search
                     </button>
                 </form>
 
                 <!-- Table -->
                 <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
+                    <table class="min-w-full divide-y divide-gray-200 text-sm">
                         <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-                            <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Subcontractor</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Code</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Contact</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
+                            <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
+                            <th class="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase">Subcontractor</th>
+                            <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                         </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                         @forelse ($partners as $partner)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $partner->code ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap font-medium">{{ $partner->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $partner->contact_person ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $partner->phone ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap">{{ $partner->email ?? '-' }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <td class="px-4 py-3 whitespace-nowrap">{{ $partner->code ?? '-' }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap font-medium">{{ $partner->name }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">{{ $partner->contact_person ?? '-' }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">{{ $partner->phone ?? '-' }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap">{{ $partner->email ?? '-' }}</td>
+                                <td class="px-4 py-3 whitespace-nowrap text-center">
                                     {{ $partner->is_subcontractor ? 'Yes / 〇' : 'No / ×' }}
                                 </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right space-x-3">
+                                <td class="px-4 py-3 whitespace-nowrap text-right space-x-2">
                                     <a href="{{ route('business-partners.edit', $partner) }}"
                                        class="text-blue-600 hover:underline">Edit</a>
 
@@ -80,7 +80,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="7" class="px-4 py-8 text-center text-gray-500">
                                     No partners found.
                                 </td>
                             </tr>
@@ -90,10 +90,11 @@
                 </div>
 
                 <!-- Pagination -->
-                <div class="mt-6">
+                <div class="mt-4 text-sm">
                     {{ $partners->links() }}
                 </div>
             </div>
         </div>
     </div>
+</div>
 @endsection

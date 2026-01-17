@@ -15,7 +15,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="antialiased bg-gray-100" x-data="{ sidebarOpen: false }">
+<body class="antialiased bg-gray-100" x-data="{ sidebarOpen: true }">
 
 <div class="flex min-h-screen">
 
@@ -23,7 +23,8 @@
     @include('layouts.sidebar')
 
     <!-- Main Content Wrapper -->
-    <div class="flex-1 flex flex-col lg:ml-64">
+    <div class="flex-1 flex flex-col transition-all duration-200"
+         :class="sidebarOpen ? 'lg:ml-64' : 'lg:ml-0'">
 
         <!-- Navigation -->
         <nav class="bg-white border-b border-gray-200">
@@ -33,9 +34,9 @@
                     <!-- Left Section -->
                     <div class="flex items-center">
 
-                        <!-- Sidebar Toggle Button -->
+                        <!-- Sidebar Toggle Button (Now visible on all screens) -->
                         <button @click="sidebarOpen = !sidebarOpen"
-                                class="mr-4 text-gray-500 hover:text-gray-700 focus:outline-none lg:hidden">
+                                class="mr-4 text-gray-500 hover:text-gray-700 focus:outline-none">
                             ☰
                         </button>
 
