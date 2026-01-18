@@ -146,11 +146,11 @@
         </div>
     </div>
 
-    <!-- Two Factor Authentication (Email OTP) -->
+    <!-- Two Factor Authentication -->
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
-            <h3 class="text-lg font-medium text-gray-900">Two Factor Authentication (Email OTP)</h3>
-            <p class="mt-1 text-sm text-gray-600">Add additional security to your account. When enabled, you'll receive a verification code via email during login.</p>
+            <h3 class="text-lg font-medium text-gray-900">Two Factor Authentication</h3>
+            <p class="mt-1 text-sm text-gray-600">Add additional security to your account using two-factor authentication. Choose your preferred method below.</p>
 
             <!-- Session Status -->
             @if (session('status') === 'two-factor-enabled')
@@ -162,6 +162,18 @@
             @if (session('status') === 'two-factor-disabled')
                 <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
                     Two factor authentication has been disabled.
+                </div>
+            @endif
+
+            @if (session('status') === 'two-factor-authentication-enabled')
+                <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
+                    ✓ Authenticator 2FA has been enabled! Scan the QR code below.
+                </div>
+            @endif
+
+            @if (session('status') === 'two-factor-authentication-disabled')
+                <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
+                    Authenticator 2FA has been disabled.
                 </div>
             @endif
 
@@ -183,9 +195,71 @@
                 </div>
             @endif
 
+            <!-- 2FA Method Selection -->
+            @if (!Auth::user()->two_factor_enabled)
+                <div class="mt-6 space-y-4">
+                    <h4 class="text-md font-semibold text-gray-900">Choose Your 2FA Method</h4>
+                    
+                    <!-- Email OTP Option -->
+                    <div class="border-2 border-gray-200 rounded-lg p-6 hover:border-indigo-500 transition">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-8 w-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h5 class="text-lg font-medium text-gray-900">📧 Email OTP</h5>
+                                <p class="mt-2 text-sm text-gray-600">Receive a 6-digit verification code via email during login.</p>
+                                <ul class="mt-3 text-sm text-gray-600 space-y-1 list-disc list-inside">
+                                    <li>Simple and easy to use</li>
+                                    <li>No additional app required</li>
+                                    <li>Works on any device with email access</li>
+                                    <li>Codes expire in 10 minutes</li>
+                                </ul>
+                                <form method="POST" action="{{ route('two-factor.enable') }}" class="mt-4">
+                                    @csrf
+                                    <input type="hidden" name="type" value="email">
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
+                                        Enable Email OTP
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Authenticator App Option -->
+                    <div class="border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 transition">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h5 class="text-lg font-medium text-gray-900">📱 Authenticator App</h5>
+                                <p class="mt-2 text-sm text-gray-600">Use an authenticator app like Google Authenticator or Authy to generate codes.</p>
+                                <ul class="mt-3 text-sm text-gray-600 space-y-1 list-disc list-inside">
+                                    <li>More secure (offline code generation)</li>
+                                    <li>Works without internet connection</li>
+                                    <li>Industry standard (GitHub, Google, etc.)</li>
+                                    <li>Includes recovery codes for backup</li>
+                                </ul>
+                                <form method="POST" action="{{ url('/user/two-factor-authentication') }}" class="mt-4">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition">
+                                        Enable Authenticator App
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="mt-6">
-                @if (Auth::user()->two_factor_enabled)
-                    <!-- 2FA is enabled -->
+                @if (Auth::user()->usesEmailOtp())
+                    <!-- Email OTP is enabled -->
                     <div class="space-y-4">
                         <div class="bg-green-50 border border-green-200 rounded-lg p-4">
                             <p class="text-sm text-green-700 font-medium">
@@ -232,26 +306,81 @@
                             </button>
                         </form>
                     </div>
-                @else
-                    <!-- 2FA is disabled -->
+                @elseif (Auth::user()->usesAuthenticator())
+                    <!-- Authenticator 2FA is enabled -->
                     <div class="space-y-4">
-                        <div class="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                            <h4 class="text-sm font-semibold text-gray-900 mb-2">🔒 How Email 2FA Works</h4>
-                            <ul class="text-sm text-gray-700 space-y-2 list-disc list-inside">
-                                <li>When you log in, we'll send a 6-digit code to your email</li>
-                                <li>Enter the code to complete your login</li>
-                                <li>Codes expire after 10 minutes</li>
-                                <li>Each code can only be used once</li>
-                            </ul>
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <p class="text-sm text-green-700 font-medium">
+                                ✓ Authenticator-based two-factor authentication is <strong>enabled</strong>.
+                            </p>
+                            <p class="text-sm text-gray-600 mt-2">
+                                You're using an authenticator app (Google Authenticator, Authy, etc.) for 2FA.
+                            </p>
                         </div>
-                        
-                        <form method="POST" action="{{ route('two-factor.enable') }}">
+
+                        @if (!Auth::user()->two_factor_confirmed_at)
+                            <!-- Setup not confirmed yet -->
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                <h4 class="text-sm font-semibold text-gray-900 mb-2">⚠️ Complete Setup</h4>
+                                <p class="text-sm text-gray-700 mb-3">Scan the QR code below with your authenticator app:</p>
+                                
+                                <div class="flex justify-center p-4 bg-white border-2 border-gray-200 rounded-lg">
+                                    {!! Auth::user()->twoFactorQrCodeSvg() !!}
+                                </div>
+
+                                <div class="mt-4 bg-white border border-gray-300 rounded p-3">
+                                    <p class="text-xs font-semibold text-gray-700 mb-2">Recovery Codes (Save these!):</p>
+                                    <div class="font-mono text-xs text-gray-800 space-y-1">
+                                        @php
+                                            $recoveryCodes = json_decode(decrypt(Auth::user()->two_factor_recovery_codes), true);
+                                        @endphp
+                                        @foreach($recoveryCodes as $code)
+                                            <div>{{ $code }}</div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                <p class="text-xs text-gray-500 mt-3">
+                                    💡 Store recovery codes in a secure location. You'll need them if you lose access to your authenticator device.
+                                </p>
+                            </div>
+                        @else
+                            <p class="text-sm text-gray-700">Authenticator 2FA is confirmed and active.</p>
+                            
+                            <!-- Regenerate Recovery Codes -->
+                            <form method="POST" action="{{ url('/user/two-factor-recovery-codes') }}">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition">
+                                    Show Recovery Codes
+                                </button>
+                            </form>
+                            
+                            @if (session('recoveryCodes'))
+                                <div class="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                    <h4 class="text-sm font-semibold text-gray-900 mb-2">Recovery Codes</h4>
+                                    <div class="bg-white border border-gray-300 rounded p-3 font-mono text-sm">
+                                        @foreach (session('recoveryCodes') as $code)
+                                            <div class="py-1">{{ $code }}</div>
+                                        @endforeach
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">
+                                        💡 Save these codes securely! Each can only be used once.
+                                    </p>
+                                </div>
+                            @endif
+                        @endif
+
+                        <!-- Disable Authenticator 2FA -->
+                        <form method="POST" action="{{ url('/user/two-factor-authentication') }}">
                             @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                🔐 Enable Two-Factor Authentication
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
+                                🔓 Disable Authenticator 2FA
                             </button>
                         </form>
                     </div>
+                @else
+                    <!-- Neither 2FA method is enabled - selection shown above -->
                 @endif
             </div>
         </div>

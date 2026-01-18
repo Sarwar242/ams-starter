@@ -7,10 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, SoftDeletes;
+    use HasFactory, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -30,6 +32,7 @@ class User extends Authenticatable
         'profile_photo_path',
         'current_team_id',
         'two_factor_enabled',
+        'two_factor_type',
     ];
 
     /**
@@ -53,12 +56,29 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'two_factor_confirmed_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
             'two_factor_enabled' => 'boolean',
             'joined_at' => 'date',
             'deleted_at' => 'datetime',
         ];
+    }
+
+    /**
+     * Check if user is using email OTP 2FA.
+     */
+    public function usesEmailOtp(): bool
+    {
+        return $this->two_factor_enabled && $this->two_factor_type === 'email';
+    }
+
+    /**
+     * Check if user is using authenticator 2FA.
+     */
+    public function usesAuthenticator(): bool
+    {
+        return $this->two_factor_secret !== null && $this->two_factor_type === 'authenticator';
     }
 
     /**

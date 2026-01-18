@@ -18,6 +18,7 @@ class TwoFactorController extends Controller
         
         $user->update([
             'two_factor_enabled' => true,
+            'two_factor_type' => 'email', // Set type to email
         ]);
 
         return back()->with('status', 'two-factor-enabled');
@@ -32,6 +33,7 @@ class TwoFactorController extends Controller
         
         $user->update([
             'two_factor_enabled' => false,
+            'two_factor_type' => null,
         ]);
 
         // Delete any pending OTPs

@@ -110,9 +110,19 @@
                         <dl>
                             <dt class="text-sm font-medium text-gray-500 truncate">Two-Factor Auth</dt>
                             <dd class="mt-1">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ Auth::user()->two_factor_enabled ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                    {{ Auth::user()->two_factor_enabled ? 'Enabled' : 'Disabled' }}
-                                </span>
+                                @if(Auth::user()->usesEmailOtp())
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        📧 Email OTP
+                                    </span>
+                                @elseif(Auth::user()->usesAuthenticator())
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        📱 Authenticator
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        Disabled
+                                    </span>
+                                @endif
                             </dd>
                         </dl>
                     </div>
@@ -162,7 +172,7 @@
                     Edit Profile
                 </a>
                 
-                @if (!Auth::user()->two_factor_enabled)
+                @if (!Auth::user()->usesEmailOtp() && !Auth::user()->usesAuthenticator())
                 <a href="{{ route('profile.show') }}#two-factor" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:bg-green-700 active:bg-green-900 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
                     Enable Two-Factor Auth
                 </a>

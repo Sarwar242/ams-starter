@@ -44,12 +44,15 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::updateUserPasswordsUsing(UpdateUserPassword::class);
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         
-        // Custom 2FA using email OTP
+        // Custom 2FA pipeline - handles both authenticator and email OTP
         Fortify::authenticateThrough(function (Request $request) {
             return array_filter([
                 config('fortify.limiters.login') ? null : null,
+                // Check for Fortify's built-in authenticator 2FA first
                 Features::enabled(Features::twoFactorAuthentication()) ? RedirectIfTwoFactorAuthenticatable::class : null,
+                // Then check for custom email OTP 2FA
                 RedirectIfTwoFactorEnabled::class,
+                // Finally attempt authentication and prepare session
                 AttemptToAuthenticate::class,
                 PrepareAuthenticatedSession::class,
             ]);

@@ -22,8 +22,8 @@ class RedirectIfTwoFactorEnabled
             $request->{(\Laravel\Fortify\Fortify::username())}
         )->first();
 
-        // If user has 2FA enabled and this is not the OTP verification request
-        if ($user && $user->two_factor_enabled && !$request->has('otp')) {
+        // If user has EMAIL OTP 2FA enabled and this is not the OTP verification request
+        if ($user && $user->usesEmailOtp() && !$request->has('otp')) {
             // Validate password first
             if (!\Illuminate\Support\Facades\Hash::check($request->password, $user->password)) {
                 $this->limiter->increment($request);
@@ -60,6 +60,9 @@ class RedirectIfTwoFactorEnabled
             // Redirect to OTP verification page
             return redirect()->route('two-factor.login');
         }
+
+        // If user has Authenticator 2FA enabled, let Fortify's RedirectIfTwoFactorAuthenticatable handle it
+        // This action only handles email OTP - authenticator is handled by Fortify's built-in pipeline
 
         return $next($request);
     }
