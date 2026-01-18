@@ -1,4 +1,14 @@
 services:
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: ams_mailhog
+    restart: always
+    ports:
+      - 1025:1025
+      - 8025:8025
+    networks:
+      - app-network
+
   mariadb:
     image: mariadb:10.5
     container_name: ams_mariadb
