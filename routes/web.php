@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DepartmentController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\BusinessPartnerController;
@@ -126,4 +127,24 @@ Route::middleware(['auth'])->group(function () {
 
     Route::delete('/business-partners/{businessPartner}', [BusinessPartnerController::class, 'destroy'])
         ->name('business-partners.destroy');
+
+
+    // ── Departments / 部門マスタ───────────────────────────────
+    Route::get('/departments', [DepartmentController::class, 'index'])
+    ->name('departments.index');
+
+    Route::get('/departments/create', [DepartmentController::class, 'create'])
+        ->name('departments.create');
+
+    Route::post('/departments', [DepartmentController::class, 'store'])
+        ->name('departments.store');
+
+    Route::get('/departments/{businessPartner}/edit', [DepartmentController::class, 'edit'])
+        ->name('departments.edit');
+
+    Route::put('/departments/{businessPartner}', [DepartmentController::class, 'update'])
+        ->name('departments.update');
+
+    Route::delete('/departments/{businessPartner}', [DepartmentController::class, 'destroy'])
+        ->name('departments.destroy');
 });
