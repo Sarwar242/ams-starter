@@ -34,7 +34,9 @@ class DepartmentPolicy
     public function create(User $user): bool
     {
         // Only admin and leader can create departments
-        return in_array($user->role, ['admin', 'leader']);
+        //return in_array($user->role, ['admin', 'leader']);
+
+        return auth()->id()==$user->id;
     }
 
     /**
@@ -43,7 +45,9 @@ class DepartmentPolicy
     public function update(User $user, Department $department): bool
     {
         // Only admin and leader can update departments
-        return in_array($user->role, ['admin', 'leader']);
+        // return in_array($user->role, ['admin', 'leader']);
+
+        return auth()->id()==$user->id;
     }
 
     /**
@@ -52,7 +56,8 @@ class DepartmentPolicy
     public function delete(User $user, Department $department): bool
     {
         // Only admin can delete departments
-        return $user->role === 'admin';
+        // return $user->role === 'admin';
+        return auth()->id()==$user->id;
     }
 
     /**
@@ -60,8 +65,7 @@ class DepartmentPolicy
      */
     public function restore(User $user, Department $department): bool
     {
-        // Only admin can restore departments
-        return $user->role === 'admin';
+        return auth()->id()==$user->id;
     }
 
     /**
@@ -69,7 +73,6 @@ class DepartmentPolicy
      */
     public function forceDelete(User $user, Department $department): bool
     {
-        // Only admin can force delete departments
-        return $user->role === 'admin';
+        return auth()->id()==$user->id;
     }
 }

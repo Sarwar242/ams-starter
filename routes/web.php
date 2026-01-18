@@ -131,7 +131,7 @@ Route::middleware(['auth'])->group(function () {
 
     // ── Departments / 部門マスタ───────────────────────────────
     Route::get('/departments', [DepartmentController::class, 'index'])
-    ->name('departments.index');
+        ->name('departments.index');
 
     Route::get('/departments/create', [DepartmentController::class, 'create'])
         ->name('departments.create');
@@ -139,12 +139,12 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/departments', [DepartmentController::class, 'store'])
         ->name('departments.store');
 
-    Route::get('/departments/{businessPartner}/edit', [DepartmentController::class, 'edit'])
+    Route::get('/departments/{department}/edit', [DepartmentController::class, 'edit'])
         ->name('departments.edit');
 
-    Route::put('/departments/{businessPartner}', [DepartmentController::class, 'update'])
+    Route::put('/departments/{department}', [DepartmentController::class, 'update'])
         ->name('departments.update');
 
-    Route::delete('/departments/{businessPartner}', [DepartmentController::class, 'destroy'])
+    Route::delete('/departments/{department}', [DepartmentController::class, 'destroy'])
         ->name('departments.destroy');
 });
