@@ -19,6 +19,19 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Listen for Fortify 2FA events to set the type
+        \Illuminate\Support\Facades\Event::listen(
+            \Laravel\Fortify\Events\TwoFactorAuthenticationEnabled::class,
+            function ($event) {
+                $event->user->update(['two_factor_type' => 'authenticator']);
+            }
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \Laravel\Fortify\Events\TwoFactorAuthenticationDisabled::class,
+            function ($event) {
+                $event->user->update(['two_factor_type' => null]);
+            }
+        );
     }
 }

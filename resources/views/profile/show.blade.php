@@ -150,164 +150,239 @@
     <div class="bg-white shadow rounded-lg">
         <div class="px-4 py-5 sm:p-6">
             <h3 class="text-lg font-medium text-gray-900">Two Factor Authentication</h3>
-            <p class="mt-1 text-sm text-gray-600">Add additional security to your account using two factor authentication.</p>
+            <p class="mt-1 text-sm text-gray-600">Add additional security to your account using two-factor authentication. Choose your preferred method below.</p>
 
             <!-- Session Status -->
-            @if (session('status') === 'two-factor-authentication-enabled')
+            @if (session('status') === 'two-factor-enabled')
                 <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
-                    Two factor authentication has been enabled.
+                    ✓ Two factor authentication has been enabled successfully!
                 </div>
             @endif
 
-            @if (session('status') === 'two-factor-authentication-disabled')
+            @if (session('status') === 'two-factor-disabled')
                 <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
                     Two factor authentication has been disabled.
                 </div>
             @endif
 
-            <div class="mt-6" x-data="{ showQr: false, showRecovery: false }">
-                @if (Auth::user()->two_factor_secret)
-                    <!-- 2FA is enabled -->
-                    <div class="space-y-4">
-                        <p class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg p-4">
-                            ✓ Two factor authentication is currently enabled.
-                        </p>
+            @if (session('status') === 'two-factor-authentication-enabled')
+                <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
+                    ✓ Authenticator 2FA has been enabled! Scan the QR code below.
+                </div>
+            @endif
 
-                        <!-- Show QR Code Button -->
-                        @if (!Auth::user()->two_factor_confirmed_at)
-                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                                <h4 class="text-sm font-semibold text-gray-900 mb-2">⚠️ Finish Setting Up 2FA</h4>
-                                <p class="text-sm text-gray-700 mb-3">You've enabled two factor authentication, but haven't confirmed it yet. Please scan the QR code below and confirm with a code from your authenticator app.</p>
-                                
-                                <button @click="showQr = !showQr" type="button" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150 mb-3">
-                                    <span x-text="showQr ? 'Hide QR Code' : 'Show QR Code'"></span>
-                                </button>
+            @if (session('status') === 'two-factor-authentication-disabled')
+                <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
+                    Authenticator 2FA has been disabled.
+                </div>
+            @endif
 
-                                <!-- QR Code -->
-                                <div x-show="showQr" x-cloak class="bg-white border-2 border-gray-200 rounded-lg p-4 mb-4">
-                                    <p class="text-sm text-gray-700 mb-3">Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.):</p>
-                                    <div class="flex justify-center p-4 bg-white" id="qr-code-container">
-                                        <div class="text-center">
-                                            <div class="animate-pulse">Loading QR Code...</div>
-                                        </div>
-                                    </div>
-                                </div>
+            @if (session('status') === 'otp-sent')
+                <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
+                    ✓ Verification code sent to your email! Please check your inbox.
+                </div>
+            @endif
 
-                                <!-- Confirm 2FA Form -->
-                                <form method="POST" action="{{ url('/user/confirmed-two-factor-authentication') }}" class="space-y-4">
+            @if (session('status') === 'otp-verified')
+                <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
+                    ✓ OTP verified successfully!
+                </div>
+            @endif
+
+            @if ($errors->has('otp'))
+                <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                    <div class="font-medium text-sm text-red-600">{{ $errors->first('otp') }}</div>
+                </div>
+            @endif
+
+            <!-- 2FA Method Selection -->
+            @if (!Auth::user()->two_factor_enabled)
+                <div class="mt-6 space-y-4">
+                    <h4 class="text-md font-semibold text-gray-900">Choose Your 2FA Method</h4>
+                    
+                    <!-- Email OTP Option -->
+                    <div class="border-2 border-gray-200 rounded-lg p-6 hover:border-indigo-500 transition">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-8 w-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h5 class="text-lg font-medium text-gray-900">📧 Email OTP</h5>
+                                <p class="mt-2 text-sm text-gray-600">Receive a 6-digit verification code via email during login.</p>
+                                <ul class="mt-3 text-sm text-gray-600 space-y-1 list-disc list-inside">
+                                    <li>Simple and easy to use</li>
+                                    <li>No additional app required</li>
+                                    <li>Works on any device with email access</li>
+                                    <li>Codes expire in 10 minutes</li>
+                                </ul>
+                                <form method="POST" action="{{ route('two-factor.enable') }}" class="mt-4">
                                     @csrf
-                                    <div>
-                                        <label for="code" class="block text-sm font-medium text-gray-700">Enter Code from Authenticator App</label>
-                                        <input id="code" type="text" name="code" class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border" placeholder="000000" maxlength="6" required>
-                                    </div>
-                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                        Confirm & Finish Setup
+                                    <input type="hidden" name="type" value="email">
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
+                                        Enable Email OTP
                                     </button>
                                 </form>
                             </div>
-                        @else
-                            <p class="text-sm text-gray-700">Two factor authentication is confirmed and active.</p>
-                        @endif
-
-                        <!-- Show Recovery Codes Button -->
-                        <button @click="showRecovery = !showRecovery" type="button" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                            <span x-text="showRecovery ? 'Hide Recovery Codes' : 'Show Recovery Codes'"></span>
-                        </button>
-
-                        <!-- Recovery Codes Display -->
-                        <div x-show="showRecovery" x-cloak class="bg-yellow-50 border border-yellow-200 rounded-lg p-4" id="recovery-codes-container">
-                            <h4 class="text-sm font-semibold text-gray-900 mb-2">Recovery Codes</h4>
-                            <p class="text-sm text-gray-700 mb-3">Store these recovery codes in a secure password manager. They can be used to recover access if your device is lost.</p>
-                            <div class="bg-white border border-gray-300 rounded p-3 font-mono text-sm">
-                                <div class="text-center text-gray-500">Click "Regenerate Recovery Codes" to view codes</div>
-                            </div>
-                        </div>
-
-                        <div class="flex gap-3">
-                            <!-- Regenerate Recovery Codes -->
-                            <form method="POST" action="{{ url('/user/two-factor-recovery-codes') }}">
-                                @csrf
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:bg-gray-700 active:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    Regenerate Recovery Codes
-                                </button>
-                            </form>
-
-                            <!-- Disable 2FA -->
-                            <form method="POST" action="{{ url('/user/two-factor-authentication') }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                    Disable 2FA
-                                </button>
-                            </form>
                         </div>
                     </div>
-                @else
-                    <!-- 2FA is disabled -->
+
+                    <!-- Authenticator App Option -->
+                    <div class="border-2 border-gray-200 rounded-lg p-6 hover:border-green-500 transition">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0">
+                                <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="ml-4 flex-1">
+                                <h5 class="text-lg font-medium text-gray-900">📱 Authenticator App</h5>
+                                <p class="mt-2 text-sm text-gray-600">Use an authenticator app like Google Authenticator or Authy to generate codes.</p>
+                                <ul class="mt-3 text-sm text-gray-600 space-y-1 list-disc list-inside">
+                                    <li>More secure (offline code generation)</li>
+                                    <li>Works without internet connection</li>
+                                    <li>Industry standard (GitHub, Google, etc.)</li>
+                                    <li>Includes recovery codes for backup</li>
+                                </ul>
+                                <form method="POST" action="{{ url('/user/two-factor-authentication') }}" class="mt-4">
+                                    @csrf
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition">
+                                        Enable Authenticator App
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            <div class="mt-6">
+                @if (Auth::user()->usesEmailOtp())
+                    <!-- Email OTP is enabled -->
                     <div class="space-y-4">
-                        <p class="text-sm text-gray-700">When two factor authentication is enabled, you will be prompted for a secure, random token during authentication. You may retrieve this token from your phone's authenticator application.</p>
-                        
-                        <form method="POST" action="{{ url('/user/two-factor-authentication') }}">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <p class="text-sm text-green-700 font-medium">
+                                ✓ Email-based two-factor authentication is <strong>enabled</strong>.
+                            </p>
+                            <p class="text-sm text-gray-600 mt-2">
+                                When you log in, you'll receive a 6-digit verification code at <strong>{{ Auth::user()->email }}</strong>
+                            </p>
+                        </div>
+
+                        <!-- Test OTP -->
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-gray-900 mb-2">🧪 Test Your 2FA</h4>
+                            <p class="text-sm text-gray-700 mb-3">Click below to send a test verification code to your email.</p>
+                            
+                            <form method="POST" action="{{ route('two-factor.send-otp') }}" class="space-y-4">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                    📧 Send Test Code
+                                </button>
+                            </form>
+
+                            <!-- Verify Test OTP -->
+                            @if (session('status') === 'otp-sent')
+                                <form method="POST" action="{{ route('two-factor.verify') }}" class="mt-4 space-y-3">
+                                    @csrf
+                                    <div>
+                                        <label for="otp" class="block text-sm font-medium text-gray-700">Enter the 6-digit code from your email:</label>
+                                        <input id="otp" type="text" name="otp" maxlength="6" placeholder="000000" required class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-center text-lg font-mono">
+                                    </div>
+                                    <button type="submit" class="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                        ✓ Verify Code
+                                    </button>
+                                </form>
+                            @endif
+                        </div>
+
+                        <!-- Disable 2FA -->
+                        <form method="POST" action="{{ route('two-factor.disable') }}">
                             @csrf
-                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:bg-indigo-700 active:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150">
-                                Enable Two-Factor Authentication
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:bg-red-700 active:bg-red-900 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition ease-in-out duration-150">
+                                🔓 Disable 2FA
                             </button>
                         </form>
                     </div>
+                @elseif (Auth::user()->usesAuthenticator())
+                    <!-- Authenticator 2FA is enabled -->
+                    <div class="space-y-4">
+                        <div class="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <p class="text-sm text-green-700 font-medium">
+                                ✓ Authenticator-based two-factor authentication is <strong>enabled</strong>.
+                            </p>
+                            <p class="text-sm text-gray-600 mt-2">
+                                You're using an authenticator app (Google Authenticator, Authy, etc.) for 2FA.
+                            </p>
+                        </div>
+
+                        @if (!Auth::user()->two_factor_confirmed_at)
+                            <!-- Setup not confirmed yet -->
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                <h4 class="text-sm font-semibold text-gray-900 mb-2">⚠️ Complete Setup</h4>
+                                <p class="text-sm text-gray-700 mb-3">Scan the QR code below with your authenticator app:</p>
+                                
+                                <div class="flex justify-center p-4 bg-white border-2 border-gray-200 rounded-lg">
+                                    {!! Auth::user()->twoFactorQrCodeSvg() !!}
+                                </div>
+
+                                <div class="mt-4 bg-white border border-gray-300 rounded p-3">
+                                    <p class="text-xs font-semibold text-gray-700 mb-2">Recovery Codes (Save these!):</p>
+                                    <div class="font-mono text-xs text-gray-800 space-y-1">
+                                        @php
+                                            $recoveryCodes = json_decode(decrypt(Auth::user()->two_factor_recovery_codes), true);
+                                        @endphp
+                                        @foreach($recoveryCodes as $code)
+                                            <div>{{ $code }}</div>
+                                        @endforeach
+                                    </div>
+                                </div>
+
+                                <p class="text-xs text-gray-500 mt-3">
+                                    💡 Store recovery codes in a secure location. You'll need them if you lose access to your authenticator device.
+                                </p>
+                            </div>
+                        @else
+                            <p class="text-sm text-gray-700">Authenticator 2FA is confirmed and active.</p>
+                            
+                            <!-- Regenerate Recovery Codes -->
+                            <form method="POST" action="{{ url('/user/two-factor-recovery-codes') }}">
+                                @csrf
+                                <button type="submit" class="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition">
+                                    Show Recovery Codes
+                                </button>
+                            </form>
+                            
+                            @if (session('recoveryCodes'))
+                                <div class="mt-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                                    <h4 class="text-sm font-semibold text-gray-900 mb-2">Recovery Codes</h4>
+                                    <div class="bg-white border border-gray-300 rounded p-3 font-mono text-sm">
+                                        @foreach (session('recoveryCodes') as $code)
+                                            <div class="py-1">{{ $code }}</div>
+                                        @endforeach
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">
+                                        💡 Save these codes securely! Each can only be used once.
+                                    </p>
+                                </div>
+                            @endif
+                        @endif
+
+                        <!-- Disable Authenticator 2FA -->
+                        <form method="POST" action="{{ url('/user/two-factor-authentication') }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition">
+                                🔓 Disable Authenticator 2FA
+                            </button>
+                        </form>
+                    </div>
+                @else
+                    <!-- Neither 2FA method is enabled - selection shown above -->
                 @endif
             </div>
-
-            <!-- Script to load QR code dynamically -->
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Load QR code when button is clicked
-                    document.addEventListener('click', function(e) {
-                        if (e.target.closest('[x-data]')) {
-                            setTimeout(function() {
-                                const qrContainer = document.getElementById('qr-code-container');
-                                if (qrContainer && qrContainer.querySelector('.animate-pulse')) {
-                                    fetch('{{ url('/user/two-factor-qr-code') }}')
-                                        .then(response => response.text())
-                                        .then(svg => {
-                                            qrContainer.innerHTML = svg;
-                                        })
-                                        .catch(error => {
-                                            qrContainer.innerHTML = '<div class="text-red-600">Error loading QR code</div>';
-                                        });
-                                }
-                            }, 100);
-                        }
-                    });
-
-                    // Load recovery codes when regenerated
-                    const forms = document.querySelectorAll('form[action="{{ url('/user/two-factor-recovery-codes') }}"]');
-                    forms.forEach(form => {
-                        form.addEventListener('submit', function(e) {
-                            e.preventDefault();
-                            fetch(this.action, {
-                                method: 'POST',
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                                    'Accept': 'application/json',
-                                },
-                            })
-                            .then(response => response.json())
-                            .then(data => {
-                                const container = document.getElementById('recovery-codes-container');
-                                if (container && data) {
-                                    const codeList = data.map(code => `<div class="py-1">${code}</div>`).join('');
-                                    container.querySelector('.font-mono').innerHTML = codeList;
-                                    container.classList.remove('hidden');
-                                }
-                                alert('Recovery codes regenerated! Please save them securely.');
-                            })
-                            .catch(error => {
-                                alert('Error regenerating codes. Please try again.');
-                            });
-                        });
-                    });
-                });
-            </script>
         </div>
     </div>
 </div>
