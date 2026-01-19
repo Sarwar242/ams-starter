@@ -177,6 +177,12 @@
                 </div>
             @endif
 
+            @if (session('status') === 'two-factor-authentication-confirmed')
+                <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
+                    ✓ Authenticator 2FA confirmed and activated! You'll now be asked for a code during login.
+                </div>
+            @endif
+
             @if (session('status') === 'otp-sent')
                 <div class="mt-4 font-medium text-sm text-green-600 bg-green-50 border border-green-200 rounded-lg p-4">
                     ✓ Verification code sent to your email! Please check your inbox.
@@ -343,6 +349,29 @@
                                 <p class="text-xs text-gray-500 mt-3">
                                     💡 Store recovery codes in a secure location. You'll need them if you lose access to your authenticator device.
                                 </p>
+
+                                <!-- Confirmation Form -->
+                                <div class="mt-4 bg-white border border-indigo-300 rounded-lg p-4">
+                                    <h5 class="text-sm font-semibold text-gray-900 mb-2">🔐 Confirm Setup</h5>
+                                    <p class="text-sm text-gray-700 mb-3">Enter the 6-digit code from your authenticator app to confirm:</p>
+                                    
+                                    @if ($errors->has('code'))
+                                        <div class="mb-3 bg-red-50 border border-red-200 rounded p-2">
+                                            <p class="text-sm text-red-600">{{ $errors->first('code') }}</p>
+                                        </div>
+                                    @endif
+
+                                    <form method="POST" action="{{ url('/user/confirmed-two-factor-authentication') }}" class="space-y-3">
+                                        @csrf
+                                        <div>
+                                            <label for="code" class="block text-sm font-medium text-gray-700">Authentication Code:</label>
+                                            <input id="code" type="text" name="code" maxlength="6" placeholder="000000" required autofocus class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm px-3 py-2 border text-center text-lg font-mono">
+                                        </div>
+                                        <button type="submit" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition">
+                                            ✓ Confirm & Activate
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
                         @else
                             <p class="text-sm text-gray-700">Authenticator 2FA is confirmed and active.</p>

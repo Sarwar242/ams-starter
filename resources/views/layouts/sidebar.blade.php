@@ -83,9 +83,9 @@
         </div>
 
         <!-- Master Menu -->
-        <div x-data="{ open: false }">
+        <div x-data="{ open: {{ request()->routeIs('departments.*') || request()->routeIs('business-partners.*') ? 'true' : 'false' }} }">
             <button @click="open = !open"
-                class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-indigo-50 text-gray-700">
+                class="w-full flex items-center justify-between px-3 py-2 rounded-md hover:bg-indigo-50 text-gray-700 {{ request()->routeIs('departments.*') || request()->routeIs('business-partners.*') ? 'bg-indigo-50' : '' }}">
                 🗂
                 <span class="ml-2 text-left flex-1">
                     マスタ管理  
@@ -103,10 +103,15 @@
                     従業員マスタ機能  
                     <span class="block text-xs text-gray-400">Employee Master</span>
                 </a>
+                <a href="{{ route('departments.index') }}"
+                   class="block px-2 py-1 rounded hover:bg-gray-100 {{ request()->routeIs('departments.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : '' }}">
+                    部署マスタ  
+                    <span class="block text-xs {{ request()->routeIs('departments.*') ? 'text-indigo-600' : 'text-gray-400' }}">Department Master</span>
+                </a>
                 <a href="{{ route('business-partners.index') }}"
-                   class="block px-2 py-1 rounded hover:bg-gray-100">
+                   class="block px-2 py-1 rounded hover:bg-gray-100 {{ request()->routeIs('business-partners.*') ? 'bg-indigo-100 text-indigo-700 font-semibold' : '' }}">
                     取引会社マスタ  
-                    <span class="block text-xs text-gray-400">Trading Company Master</span>
+                    <span class="block text-xs {{ request()->routeIs('business-partners.*') ? 'text-indigo-600' : 'text-gray-400' }}">Trading Company Master</span>
                 </a>
             </div>
         </div>
