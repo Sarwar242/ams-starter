@@ -1,6 +1,7 @@
 *.log
 .DS_Store
 .env
+.env.docker
 .env.backup
 .env.production
 .phpactor.json
@@ -23,3 +24,6 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 /docx
+php
+docker-compose.yml
+mariadb
